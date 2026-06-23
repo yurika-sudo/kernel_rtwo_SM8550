@@ -2,7 +2,7 @@
 
 > ⚠️ **Flash via OrangeFox / TWRP only.**
 
-1. Download ZIP from [Releases](https://github.com/yurika-sudo/kernel_sapphire_SM6225/releases)
+1. Download ZIP from [Releases](https://github.com/yurika-sudo/kernel_rtwo_SM8550/releases)
 2. Boot into recovery
 3. Flash the ZIP
 4. Reboot
@@ -38,12 +38,10 @@ If you see "absolute gibberish" on the artifacts page: you're looking at the raw
 
 ## Troubleshooting
 
-### Bootloop (Stuck on Boot Animation)
+### Boot Modes
 
-Force reboot: Hold **Power** until screen goes black (~5s), then immediately hold **Vol+** while powering back on to enter recovery. Navigate to **root/Mount → root /data/adb**, then delete the `adb` folder. Reboot. install modules one at a time to find the culprit.
+Recovery: Turn off the device → hold Volume Down + Power → select "Recovery mode" with the Volume buttons.
 
-### Splash Screen Loop (5 Second Restart Cycle)
-
-Indicates a module conflict or incompatible root hook. fix: go to fastboot and flash the ROM boot.img.
+Fastboot/Bootloader: Turn off the device → hold Volume Down + Power (hold until the bootloader enters).
 
 **If you need help:** You must have a **PC**, respond in **English** (minimal), and respond **fast**. DM [@superuseryu](https://t.me/home_yu_chat) directly — slow response = dropped support. This is a personal project; debug sessions are time-sensitive.
