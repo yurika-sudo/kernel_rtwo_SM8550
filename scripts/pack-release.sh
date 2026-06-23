@@ -29,13 +29,10 @@ if [ "$ZIP_MODE" = "aio" ] || [ "$ZIP_MODE" = "both" ]; then
     # artifact dirs: gki-ksun, gki-suki, gki-noksu, clo-ksun, clo-suki, clo-noksu
     DIR_NAME=$(basename "$ARTIFACT_DIR")
     case "$DIR_NAME" in
-      gki-ksun)  IMG_NAME="Image.gki.ksu"   ;;
-      gki-suki)  IMG_NAME="Image.gki.suki"  ;;
-      gki-noksu) IMG_NAME="Image.gki.noksu" ;;
-      clo-ksun)  IMG_NAME="Image.clo.ksu"   ;;
-      clo-suki)  IMG_NAME="Image.clo.suki"  ;;
-      clo-noksu) IMG_NAME="Image.clo.noksu" ;;
-      *)         IMG_NAME="Image.$(echo "$DIR_NAME" | tr -d '-')" ;;
+      moto-ksun)  IMG_NAME="Image.moto.ksu"   ;;
+      moto-suki)  IMG_NAME="Image.moto.suki"  ;;
+      moto-noksu) IMG_NAME="Image.moto.noksu" ;;
+      *)          IMG_NAME="Image.${DIR_NAME}" ;;
     esac
 
     echo "[AIO] Extracting Image from: $ARTIFACT_ZIP → $IMG_NAME"
@@ -45,7 +42,7 @@ if [ "$ZIP_MODE" = "aio" ] || [ "$ZIP_MODE" = "both" ]; then
   done
 
   echo "[AIO] Images collected:"
-  ls -lh ak3_aio/Image.gki.* 2>/dev/null || { echo "[ERROR] No named images found"; exit 1; }
+  ls -lh ak3_aio/Image.moto.* 2>/dev/null || { echo "[ERROR] No named images found"; exit 1; }
 
   cd ak3_aio
   zip -r9 "../release_zips/${AIO_NAME}" * -x .git/*
