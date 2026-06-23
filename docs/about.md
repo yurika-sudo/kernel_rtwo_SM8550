@@ -1,6 +1,6 @@
 # About
 
-**Seiran Kernel** is a personal automated kernel project for the Redmi Note 13 4G/NFC (sapphire / sapphiren) — Snapdragon 685 / SM6225.
+**Seiran Kernel** is a personal automated kernel project for the Motorola Edge 40 Pro (rtwo) — Snapdragon 8 Gen 2 / SM8550.
 
 Built and maintained by **superuseryu** as a learning project that somehow ended up on Google.
 
@@ -16,7 +16,7 @@ This started as a way to learn kernel building properly — CI/CD, GKI complianc
 
 ## Stack
 
-- Kernel: `android13-5.15-lts` (GKI) + CodeLinaro `msm-5.15` (CLO)
+- Kernel: LineageOS `moto SM8550` (lineage-23.2, Linux 5.15)
 - Root: KernelSU-Next / SukiSU-Ultra / NoKSU
 - SUSFS for filesystem spoofing
 - CI/CD: GitHub Actions — fully automated build, package, release, notify
