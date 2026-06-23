@@ -9,6 +9,7 @@ on:
       zip_prefix:    { type: string, required: true }
       artifact_name: { type: string, required: true }
       defconfig:     { type: string, required: true }
+      clo_fragment:  { type: string, required: false }
       build_type:    { type: string, required: true }   # stable | testing
 
 env:
@@ -154,6 +155,7 @@ jobs:
           SOURCE_TYPE:  ${{ inputs.source_type }}
           KSU_TYPE:     ${{ inputs.ksu_type }}
           DEFCONFIG:    ${{ inputs.defconfig }}
+          CLO_FRAGMENT: ${{ inputs.clo_fragment }}
           VARIANT:      ${{ inputs.variant_name }}
         run: bash scripts/build.sh
 
