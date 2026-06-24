@@ -72,7 +72,8 @@ fi
 # init (display, thermal, sensors) — missing these causes boot animation loop.
 for _EXTRA in \
   "arch/arm64/configs/vendor/ext_config/moto-kalama.config" \
-  "arch/arm64/configs/vendor/ext_config/moto-kalama-gki.config"; do
+  "arch/arm64/configs/vendor/ext_config/moto-kalama-gki.config" \
+  "arch/arm64/configs/vendor/ext_config/moto-kalama-rtwo.config"; do
   if [ -f "$_EXTRA" ]; then
     echo "[${SOURCE_TYPE^^}] Merging extra fragment: $_EXTRA"
     KCONFIG_CONFIG="${OUT_DIR}/dist/.config" \
