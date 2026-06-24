@@ -8,7 +8,7 @@ set -e
 mkdir -p ./audit_logs
 
 gh api /repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs \
-  --jq '.jobs[] | select(.name | test("GKI|CLO")) | [.id, .name] | @tsv' \
+  --jq '.jobs[] | select(.name | test("Moto")) | [.id, .name] | @tsv' \
   > /tmp/build_jobs.tsv
 
 # Strip ISO timestamp prefix and ANSI escape codes only — no filtering, no headers
