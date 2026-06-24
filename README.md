@@ -1,8 +1,21 @@
-# kernel_rtwo_SM8550
+# Seiran Kernel
 
-Testing build pipeline for Motorola Edge 40 Pro (`rtwo`) — SM8550 / Snapdragon 8 Gen 2.
+Automated kernel builder for **Motorola Edge 40 Pro (rtwo)** — SM8550 / Snapdragon 8 Gen 2, Linux 5.15 (LineageOS).
 
-**Kernel base:** Linux 5.15 (LineageOS/moto SM8550, lineage-23.2)  
-**Variants:** KSU-Next · SukiSU-Ultra · NoKSU
+> [!WARNING]
+> Personal project. Tested on my own device only. Flash at your own risk.
 
-📦 [Installation](docs/installation.md) · ℹ️ [About](docs/about.md) · ⚙️ [Variants](docs/variants.md) · 📋 [Credits](docs/credits.md)
+## Quick Start
+
+1. Download ZIP from [Releases](../../releases)
+2. Flash via OrangeFox / TWRP
+3. Reboot
+
+> Using Magisk? Re-patch boot image after flashing.
+
+## Docs
+
+- [Variants & Features](docs/variants.md)
+- [Installation](docs/installation.md)
+- [About](docs/about.md)
+- [Credits](docs/credits.md)
