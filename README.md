@@ -3,7 +3,7 @@
 Automated kernel builder for **Motorola Edge 40 Pro (rtwo)** — SM8550 / Snapdragon 8 Gen 2, Linux 5.15 (LineageOS).
 
 > [!WARNING]
-> Personal project. Tested on my own device only. Flash at your own risk.
+> Personal project. Flash at your own risk.
 
 ## Quick Start
 
