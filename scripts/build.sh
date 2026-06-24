@@ -55,13 +55,38 @@ echo "[${SOURCE_TYPE^^}] Switching to ThinLTO..."
   --enable  LTO_CLANG_THIN
 make "${MAKE_FLAGS[@]}" olddefconfig
 
+# Merge platform fragment
+_FRAG_MERGED=false
 if [ -n "${CLO_FRAGMENT:-}" ] && [ -f "arch/arm64/configs/${CLO_FRAGMENT}" ]; then
-  echo "[${SOURCE_TYPE^^}] Merging fragment: $CLO_FRAGMENT"
+  echo "[${SOURCE_TYPE^^}] Merging platform fragment: $CLO_FRAGMENT"
   KCONFIG_CONFIG="${OUT_DIR}/dist/.config" \
     scripts/kconfig/merge_config.sh -m \
     "${OUT_DIR}/dist/.config" \
     "arch/arm64/configs/${CLO_FRAGMENT}"
   make "${MAKE_FLAGS[@]}" olddefconfig
+  _FRAG_MERGED=true
+fi
+
+# Merge device-specific extra fragments.
+# moto-kalama.config / moto-kalama-gki.config are required for Moto hardware
+# init (display, thermal, sensors) — missing these causes boot animation loop.
+for _EXTRA in \
+  "arch/arm64/configs/vendor/ext_config/moto-kalama.config" \
+  "arch/arm64/configs/vendor/ext_config/moto-kalama-gki.config"; do
+  if [ -f "$_EXTRA" ]; then
+    echo "[${SOURCE_TYPE^^}] Merging extra fragment: $_EXTRA"
+    KCONFIG_CONFIG="${OUT_DIR}/dist/.config" \
+      scripts/kconfig/merge_config.sh -m \
+      "${OUT_DIR}/dist/.config" "$_EXTRA"
+    make "${MAKE_FLAGS[@]}" olddefconfig
+    _FRAG_MERGED=true
+  else
+    echo "[${SOURCE_TYPE^^}] Extra fragment not found, skipping: $_EXTRA"
+  fi
+done
+
+# Force LZ4 ZRAM after all fragment merges (fragments may override the default)
+if $_FRAG_MERGED; then
   ./scripts/config --file "${OUT_DIR}/dist/.config" \
     -d ZRAM_DEF_COMP_LZORLE -d ZRAM_DEF_COMP_ZSTD \
     -e ZRAM_DEF_COMP_LZ4    -d ZRAM_DEF_COMP_LZO \
