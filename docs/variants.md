@@ -1,4 +1,4 @@
-# Variants & Features - WIP for moto
+# Variants & Features
 
 ## Variants
 
