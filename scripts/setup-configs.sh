@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# setup-configs.sh — inject safe configs into defconfig
+# setup-configs.sh — inject kernel configs into defconfig
 # env: KSU_TYPE, SOURCE_TYPE, DEFCONFIG (full path), KERNEL_DIR
 set -e
 
@@ -10,22 +10,24 @@ set -e
 
 CF="$DEFCONFIG"
 
-# Cmdline cleanup
-sed -i 's/ cgroup_disable=pressure//'                     "$CF"
+# Base cleanup
+sed -i 's/ cgroup_disable=pressure//'                      "$CF"
 sed -i 's/CONFIG_CMDLINE="/&slub_debug=- page_owner=off /' "$CF"
 
-# Strip symbols we're re-declaring to avoid "reassigning" warnings
+# Strip only symbols we explicitly re-declare below (avoids "reassigning" warnings).
+# Do NOT strip symbols owned by droidspaces.sh or vendor/kalama_GKI.config.
 for SYM in \
-    OVERLAY_FS OVERLAY_FS_REDIRECT_DIR OVERLAY_FS_REDIRECT_ALWAYS_FOLLOW \
-    OVERLAY_FS_INDEX OVERLAY_FS_XINO_AUTO OVERLAY_FS_METACOPY \
-    LRU_GEN LRU_GEN_ENABLED \
-    ZRAM_DEF_COMP_LZORLE ZRAM_DEF_COMP_ZSTD ZRAM_DEF_COMP_LZ4 \
-    ZRAM_DEF_COMP_LZO ZRAM_DEF_COMP; do
+  OVERLAY_FS OVERLAY_FS_REDIRECT_DIR OVERLAY_FS_REDIRECT_ALWAYS_FOLLOW \
+  OVERLAY_FS_INDEX OVERLAY_FS_XINO_AUTO OVERLAY_FS_METACOPY \
+  LRU_GEN LRU_GEN_ENABLED \
+  ZRAM_DEF_COMP_LZORLE ZRAM_DEF_COMP_ZSTD ZRAM_DEF_COMP_LZ4 ZRAM_DEF_COMP_LZO ZRAM_DEF_COMP; do
   sed -i "/^CONFIG_${SYM}[= ]/d; /^# CONFIG_${SYM} /d" "$CF"
 done
 
-# Safe configs: overlayfs + tmpfs + zram LZ4 + mglru
-cat >> "$CF" << 'EOF2'
+# Common configs — overlayfs, tmpfs, memory management only.
+# TCP, netfilter, HZ, debug, scheduler, workqueue: intentionally left
+# to gki_defconfig + vendor/kalama_GKI.config. See docs/config-blacklist.md.
+cat >> "$CF" << 'EOF'
 CONFIG_OVERLAY_FS=y
 CONFIG_OVERLAY_FS_REDIRECT_DIR=y
 CONFIG_OVERLAY_FS_REDIRECT_ALWAYS_FOLLOW=y
@@ -34,6 +36,8 @@ CONFIG_OVERLAY_FS_XINO_AUTO=y
 CONFIG_OVERLAY_FS_METACOPY=y
 CONFIG_TMPFS_XATTR=y
 CONFIG_TMPFS_POSIX_ACL=y
+CONFIG_LRU_GEN=y
+CONFIG_LRU_GEN_ENABLED=y
 CONFIG_ZRAM_WRITEBACK=y
 # CONFIG_ZRAM_MEMORY_TRACKING is not set
 # CONFIG_ZRAM_DEF_COMP_LZORLE is not set
@@ -41,13 +45,12 @@ CONFIG_ZRAM_WRITEBACK=y
 CONFIG_ZRAM_DEF_COMP_LZ4=y
 # CONFIG_ZRAM_DEF_COMP_LZO is not set
 CONFIG_ZRAM_DEF_COMP="lz4"
-CONFIG_LRU_GEN=y
-CONFIG_LRU_GEN_ENABLED=y
 CONFIG_FRAME_WARN=0
-EOF2
+EOF
 
+# KSU-Next
 if [ "$KSU_TYPE" = "ksun" ]; then
-  cat >> "$CF" << 'EOF2'
+  cat >> "$CF" << 'EOF'
 CONFIG_KSU=y
 CONFIG_KSU_SUSFS=y
 CONFIG_KSU_SUSFS_SUS_MAP=y
@@ -61,10 +64,10 @@ CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y
 CONFIG_KSU_SUSFS_OPEN_REDIRECT=y
 CONFIG_KSU_SUSFS_SUS_SU=y
 CONFIG_BBG=y
-EOF2
+EOF
 
 elif [ "$KSU_TYPE" = "suki" ]; then
-  cat >> "$CF" << 'EOF2'
+  cat >> "$CF" << 'EOF'
 CONFIG_KSU=y
 CONFIG_KSU_SUSFS=y
 CONFIG_KSU_SUSFS_SUS_MAP=y
@@ -78,7 +81,7 @@ CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y
 CONFIG_KSU_SUSFS_OPEN_REDIRECT=y
 CONFIG_KSU_SUSFS_SUS_SU=y
 CONFIG_KPM=y
-EOF2
+EOF
 fi
 
 echo "[OK] Configs written for KSU_TYPE=$KSU_TYPE SOURCE_TYPE=$SOURCE_TYPE"
