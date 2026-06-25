@@ -15,14 +15,15 @@
 
 ## Running a Build
 
-Actions tab → pick a workflow → **Run workflow**
+Actions tab → **Build Kernels — AIO** → **Run workflow**
 
-| Workflow | Target |
-|----------|--------|
-| `Build Kernels — AIO` | Android 15+ (GKI + CLO, all variants) |
-| `Build GKI-Compat` | Android 13 / 14 (GKI-Compat variants) |
+**Inputs:**
 
-**ZIP packaging mode** (AIO only):
-- `per-variant` — individual ZIP per variant
-- `aio` — single ZIP with all images
-- `both` — individual ZIPs + AIO ZIP
+| Input | Options | Default |
+|-------|---------|---------|
+| `ZIP packaging` | `per-variant` · `aio` · `both` | `per-variant` |
+| `Build type` | `stable` · `testing` | `stable` |
+
+**Variants built per run:** Moto-Ksun · Moto-SukiSU · Moto-NoKSU
+
+> `testing` builds append `-testing` to the ZIP name and mark the GitHub release as pre-release.
