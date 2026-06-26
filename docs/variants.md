@@ -33,5 +33,5 @@ kABI fix applied for GKI < 6.12 to prevent vendor module crashes on boot.
 | Config base | `gki_defconfig` |
 | Platform fragment | `vendor/kalama_GKI.config` (if present) |
 | Device fragments | `moto-kalama.config` · `moto-kalama-gki.config` · `moto-kalama-rtwo.config` |
-| Toolchain | Clang r547379 (topnotchfreaks) |
+| Toolchain | Clang r547379 |
 | LTO | Thin |
