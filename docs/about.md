@@ -10,7 +10,7 @@ Built and maintained by **superuseryu** as a learning project that somehow ended
 
 Stock kernels are fine. Custom kernels are fun. Automated builds are better.
 
-This started as a way to learn kernel building properly — CI/CD, GKI compliance, KSU/SUSFS integration. It's still a personal project, tested on my own device. If it works for you too, great.
+This started as a way to learn kernel building properly — CI/CD, GKI compliance, KSU/SUSFS integration. It's still a personal project. If it works for you too, great.
 
 ---
 
