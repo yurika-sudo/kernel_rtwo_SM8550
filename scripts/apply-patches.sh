@@ -16,7 +16,6 @@ cd "$KERNEL_SRC"
 
 # WildKernels patches — disabled until SM8550 compatibility is confirmed.
 # Each patch must be validated individually before re-enabling.
-if [ "${APPLY_WILDKERNELS:-0}" = "1" ]; then
   echo "=== Applying WildKernels patches ==="
   BASE="https://raw.githubusercontent.com/WildKernels/kernel_patches/refs/heads/main/common"
   apply_patch "$BASE/silence_irq_cpu_logspam.patch"          "silence_irq_cpu_logspam"
@@ -38,9 +37,6 @@ if [ "${APPLY_WILDKERNELS:-0}" = "1" ]; then
   apply_patch "$BASE/mem_opt_prefetch.patch"                 "mem_opt_prefetch"
   apply_patch "$BASE/optimized_mem_operations.patch"         "optimized_mem_operations"
   apply_patch "$BASE/unicode_bypass_fix_6.1-.patch"          "unicode_bypass_fix_6.1-"
-else
-  echo "[SKIP] WildKernels patches disabled (set APPLY_WILDKERNELS=1 to enable)"
-fi
 
 # Local common patches
 PATCHES_DIR="$WORK_DIR/patches"
