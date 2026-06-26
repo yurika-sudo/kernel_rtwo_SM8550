@@ -20,6 +20,10 @@ if [ "$ZIP_MODE" = "aio" ] || [ "$ZIP_MODE" = "both" ]; then
   echo "[AIO] Building single AK3 zip with all images..."
   git clone --depth=1 "$AK3_REPO" ak3_aio
 
+  # Override with rtwo-specific anykernel.sh
+  AK3_SCRIPT="${GITHUB_WORKSPACE}/scripts/anykernel.sh"
+  [ -f "$AK3_SCRIPT" ] && cp "$AK3_SCRIPT" ak3_aio/anykernel.sh
+
   # Extract Image from each variant and rename to named image per artifact dir
   for ARTIFACT_DIR in ./artifacts/*/; do
     ARTIFACT_ZIP=$(find "$ARTIFACT_DIR" -name "AK3-*.zip" | head -1)
