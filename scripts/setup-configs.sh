@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
-# setup-configs.sh — inject kernel configs into defconfig
+# setup-configs.sh — inject KSU/SUSFS configs into defconfig
 # env: KSU_TYPE, SOURCE_TYPE, DEFCONFIG (full path), KERNEL_DIR
+#
+# Base config (overlayfs, ZRAM, LRU_GEN, TCP, HZ, debug, etc.) is
+# intentionally left to gki_defconfig + vendor fragment merges.
+# This script only injects KSU/SUSFS/BBG/KPM configs per variant.
+# For KSU_TYPE=none: no changes at all.
 set -e
 
 : "${KSU_TYPE:?}"
@@ -8,49 +13,8 @@ set -e
 : "${DEFCONFIG:?}"
 : "${KERNEL_DIR:?}"
 
-CF="$DEFCONFIG"
-
-# Base cleanup
-sed -i 's/ cgroup_disable=pressure//'                      "$CF"
-sed -i 's/CONFIG_CMDLINE="/&slub_debug=- page_owner=off /' "$CF"
-
-# Strip only symbols we explicitly re-declare below (avoids "reassigning" warnings).
-# Do NOT strip symbols owned by droidspaces.sh or vendor/kalama_GKI.config.
-for SYM in \
-  OVERLAY_FS OVERLAY_FS_REDIRECT_DIR OVERLAY_FS_REDIRECT_ALWAYS_FOLLOW \
-  OVERLAY_FS_INDEX OVERLAY_FS_XINO_AUTO OVERLAY_FS_METACOPY \
-  LRU_GEN LRU_GEN_ENABLED \
-  ZRAM_DEF_COMP_LZORLE ZRAM_DEF_COMP_ZSTD ZRAM_DEF_COMP_LZ4 ZRAM_DEF_COMP_LZO ZRAM_DEF_COMP; do
-  sed -i "/^CONFIG_${SYM}[= ]/d; /^# CONFIG_${SYM} /d" "$CF"
-done
-
-# Common configs — overlayfs, tmpfs, memory management only.
-# TCP, netfilter, HZ, debug, scheduler, workqueue: intentionally left
-# to gki_defconfig + vendor/kalama_GKI.config. See docs/config-blacklist.md.
-cat >> "$CF" << 'EOF'
-CONFIG_OVERLAY_FS=y
-CONFIG_OVERLAY_FS_REDIRECT_DIR=y
-CONFIG_OVERLAY_FS_REDIRECT_ALWAYS_FOLLOW=y
-CONFIG_OVERLAY_FS_INDEX=y
-CONFIG_OVERLAY_FS_XINO_AUTO=y
-CONFIG_OVERLAY_FS_METACOPY=y
-CONFIG_TMPFS_XATTR=y
-CONFIG_TMPFS_POSIX_ACL=y
-CONFIG_LRU_GEN=y
-CONFIG_LRU_GEN_ENABLED=y
-CONFIG_ZRAM_WRITEBACK=y
-# CONFIG_ZRAM_MEMORY_TRACKING is not set
-# CONFIG_ZRAM_DEF_COMP_LZORLE is not set
-# CONFIG_ZRAM_DEF_COMP_ZSTD is not set
-CONFIG_ZRAM_DEF_COMP_LZ4=y
-# CONFIG_ZRAM_DEF_COMP_LZO is not set
-CONFIG_ZRAM_DEF_COMP="lz4"
-CONFIG_FRAME_WARN=0
-EOF
-
-# KSU-Next
 if [ "$KSU_TYPE" = "ksun" ]; then
-  cat >> "$CF" << 'EOF'
+  cat >> "$DEFCONFIG" << 'CONFIGS'
 CONFIG_KSU=y
 CONFIG_KSU_SUSFS=y
 CONFIG_KSU_SUSFS_SUS_MAP=y
@@ -64,10 +28,10 @@ CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y
 CONFIG_KSU_SUSFS_OPEN_REDIRECT=y
 CONFIG_KSU_SUSFS_SUS_SU=y
 CONFIG_BBG=y
-EOF
+CONFIGS
 
 elif [ "$KSU_TYPE" = "suki" ]; then
-  cat >> "$CF" << 'EOF'
+  cat >> "$DEFCONFIG" << 'CONFIGS'
 CONFIG_KSU=y
 CONFIG_KSU_SUSFS=y
 CONFIG_KSU_SUSFS_SUS_MAP=y
@@ -81,7 +45,7 @@ CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y
 CONFIG_KSU_SUSFS_OPEN_REDIRECT=y
 CONFIG_KSU_SUSFS_SUS_SU=y
 CONFIG_KPM=y
-EOF
+CONFIGS
 fi
 
-echo "[OK] Configs written for KSU_TYPE=$KSU_TYPE SOURCE_TYPE=$SOURCE_TYPE"
+echo "[OK] setup-configs done (KSU_TYPE=$KSU_TYPE)"
