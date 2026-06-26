@@ -42,6 +42,10 @@ esac
 cd "$WORK_DIR"
 git clone --depth=1 "$AK3_REPO" ak3_tmp
 
+# Override with rtwo-specific anykernel.sh (replaces Sapphire AK3 script)
+AK3_SCRIPT="${WORK_DIR}/scripts/anykernel.sh"
+[ -f "$AK3_SCRIPT" ] && cp "$AK3_SCRIPT" ak3_tmp/anykernel.sh
+
 cp "$IMAGE" "ak3_tmp/Image"
 
 cd ak3_tmp
