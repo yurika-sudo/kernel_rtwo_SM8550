@@ -11,7 +11,7 @@ on:
       defconfig:     { type: string, required: true }
       clo_fragment:  { type: string, required: false }
       build_type:    { type: string, required: true }   # stable | testing
-      with_droidspaces: { type: string, required: false, default: 'false' }
+      with_droidspaces: { type: string, required: false, default: 'true' }
 
 env:
   OUT_DIR: "out"
