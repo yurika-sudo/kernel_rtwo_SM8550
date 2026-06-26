@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# setup-toolchain.sh — download clang r547379
+# setup-toolchain.sh — download clang r563880c
 set -e
 
 : "${WORK_DIR:=$GITHUB_WORKSPACE}"
 
-CLANG_VER="r547379"
-CLANG_URL="https://github.com/topnotchfreaks/clang/releases/download/v1.0.0/clang-${CLANG_VER}.tar.gz"
+CLANG_VER="r563880c"
+CLANG_URL="https://github.com/yurika-sudo/clang-repo/releases/download/clang-1/clang-${CLANG_VER}.tar.gz"
 CLANG_DIR="${WORK_DIR}/prebuilts/clang/host/linux-x86/clang-${CLANG_VER}"
 
 mkdir -p "$CLANG_DIR"
