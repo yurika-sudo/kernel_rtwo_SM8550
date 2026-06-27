@@ -16,6 +16,7 @@ Automated kernel builder for **Motorola Edge 40 Pro (rtwo)** — SM8550 / Snapdr
 ## Docs
 
 - [Variants & Features](docs/variants.md)
+- [Setup / CI](docs/setup.md)
 - [Installation](docs/installation.md)
 - [About](docs/about.md)
 - [Credits](docs/credits.md)
