@@ -11,6 +11,8 @@ set -e
 : "${BUILD_TYPE:-stable}"
 : "${WORK_DIR:=$GITHUB_WORKSPACE}"
 
+[ "$KSU_TYPE" = "none" ] && { echo "[SKIP] NoKSU — all patches skipped (vanilla)"; exit 0; }
+
 source /tmp/apply_patch.sh
 cd "$KERNEL_SRC"
 
@@ -18,6 +20,8 @@ cd "$KERNEL_SRC"
 # Each patch must be validated individually before re-enabling.
   echo "=== Applying WildKernels patches ==="
   BASE="https://raw.githubusercontent.com/WildKernels/kernel_patches/refs/heads/main/common"
+  apply_patch "$BASE/add_limitation_scaling_min_freq.patch"          "add_limitation_scaling_min_freq.patch"
+  apply_patch "$BASE/re_write_limitation_scaling_min_freq.patch"          "re_write_limitation_scaling_min_freq.patch"
   apply_patch "$BASE/silence_irq_cpu_logspam.patch"          "silence_irq_cpu_logspam"
   apply_patch "$BASE/silence_system_logspam.patch"           "silence_system_logspam"
   apply_patch "$BASE/reduce_cache_pressure.patch"            "reduce_cache_pressure"
