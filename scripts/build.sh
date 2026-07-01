@@ -93,14 +93,14 @@ done
 
 # Force LZ4 ZRAM after all fragment merges (fragments may override the default)
 if $_FRAG_MERGED; then
-    echo "[CLO] Re-enforcing ZRAM_DEF_COMP=lz4 after fragment merge"
+    echo "[MOTO] Re-enforcing ZRAM_DEF_COMP=lz4 after fragment merge"
     ./scripts/config --file "${OUT_DIR}/dist/.config" \
     -d ZRAM_DEF_COMP_LZORLE \
     -d ZRAM_DEF_COMP_ZSTD \
     -e ZRAM_DEF_COMP_LZ4 \
     -d ZRAM_DEF_COMP_LZO \
     --set-str ZRAM_DEF_COMP "lz4"
-    echo "[CLO] Re-enforcing TCP_CONG=westwood after fragment merge"
+    echo "[MOTO] Re-enforcing TCP_CONG=westwood after fragment merge"
     ./scripts/config --file "${OUT_DIR}/dist/.config" \
     -d TCP_CONG_BBR \
     -e TCP_CONG_WESTWOOD \
