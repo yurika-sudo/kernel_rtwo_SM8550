@@ -130,6 +130,7 @@ jobs:
             "arch/arm64/configs/${{ inputs.defconfig }}"
 
       - name: "⚙️ Kernel configs"
+        if: inputs.ksu_type != 'none'
         uses: ./.github/actions/setup-configs
         with:
           ksu_type:    ${{ inputs.ksu_type }}
