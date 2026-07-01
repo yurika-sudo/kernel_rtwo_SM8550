@@ -32,11 +32,13 @@ MAKE_FLAGS=(
   OBJCOPY=llvm-objcopy
   OBJDUMP=llvm-objdump
   STRIP=llvm-strip
+  OBJSIZE=llvm-size
+  READELF=llvm-readelf
   CROSS_COMPILE=aarch64-linux-gnu-
   CROSS_COMPILE_ARM32=arm-linux-gnueabi-
   KBUILD_BUILD_USER="$KBUILD_BUILD_USER"
   KBUILD_BUILD_HOST="$KBUILD_BUILD_HOST"
-  KCFLAGS="-pipe -fno-strict-aliasing -Wno-error"
+  KCFLAGS="-pipe -fno-strict-aliasing -fno-common -Wno-error -Wno-unknown-warning-option -Wno-array-bounds -Wno-stringop-overflow -Wno-mismatched-function-types -Wno-unused-variable -Wno-misleading-indentation -Wno-incompatible-function-pointer-types"
   LLVM_PARALLEL_LINK_JOBS=2
 )
 
@@ -51,8 +53,11 @@ make "${MAKE_FLAGS[@]}" "$DEFCONFIG"
 
 echo "[${SOURCE_TYPE^^}] Switching to ThinLTO..."
 ./scripts/config --file "${OUT_DIR}/dist/.config" \
-  --disable LTO_CLANG_FULL \
-  --enable  LTO_CLANG_THIN
+  -e LTO_CLANG \
+  -d LTO_NONE \
+  -e LTO_CLANG_THIN \
+  -d LTO_CLANG_FULL \
+  -e THINLTO
 make "${MAKE_FLAGS[@]}" olddefconfig
 
 # Merge platform fragment
@@ -88,22 +93,37 @@ done
 
 # Force LZ4 ZRAM after all fragment merges (fragments may override the default)
 if $_FRAG_MERGED; then
-  ./scripts/config --file "${OUT_DIR}/dist/.config" \
-    -d ZRAM_DEF_COMP_LZORLE -d ZRAM_DEF_COMP_ZSTD \
-    -e ZRAM_DEF_COMP_LZ4    -d ZRAM_DEF_COMP_LZO \
+    echo "[CLO] Re-enforcing ZRAM_DEF_COMP=lz4 after fragment merge"
+    ./scripts/config --file "${OUT_DIR}/dist/.config" \
+    -d ZRAM_DEF_COMP_LZORLE \
+    -d ZRAM_DEF_COMP_ZSTD \
+    -e ZRAM_DEF_COMP_LZ4 \
+    -d ZRAM_DEF_COMP_LZO \
     --set-str ZRAM_DEF_COMP "lz4"
+    echo "[CLO] Re-enforcing TCP_CONG=westwood after fragment merge"
+    ./scripts/config --file "${OUT_DIR}/dist/.config" \
+    -d TCP_CONG_BBR \
+    -e TCP_CONG_WESTWOOD \
+    --set-str DEFAULT_TCP_CONG "westwood" \
+    -d DEFAULT_BBR \
+    -e DEFAULT_WESTWOOD
   make "${MAKE_FLAGS[@]}" olddefconfig
 fi
 
 echo "[${SOURCE_TYPE^^}] Building Image..."
 if ! make "${MAKE_FLAGS[@]}" Image 2>&1 | tee "$LOG"; then
   echo "[FAIL] ${SOURCE_TYPE^^} build failed:"
-  tail -60 "$LOG"
+  tail -100 "$LOG"
   exit 1
 fi
 
-cp "${OUT_DIR}/dist/arch/arm64/boot/Image" "${OUT_DIR}/dist/Image"
-echo "[${SOURCE_TYPE^^}] Image copied to ${OUT_DIR}/dist/Image"
+if [ -f "${OUT_DIR}/dist/arch/arm64/boot/Image" ]; then
+  cp "${OUT_DIR}/dist/arch/arm64/boot/Image" "${OUT_DIR}/dist/Image"
+  echo "[${SOURCE_TYPE^^}] Image copied to ${OUT_DIR}/dist/Image"
+else
+  echo "[FAIL] Image file not found in build directory!"
+  exit 1
+fi
 
 DURATION=$(( $(date +%s) - START ))
 echo "✅ Build done in $((DURATION/60))m $((DURATION%60))s"
