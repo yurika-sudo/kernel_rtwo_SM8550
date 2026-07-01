@@ -11,7 +11,6 @@ on:
       defconfig:     { type: string, required: true }
       clo_fragment:  { type: string, required: false }
       build_type:    { type: string, required: true }   # stable | testing
-      with_droidspaces: { type: string, required: false, default: 'true' }
 
 env:
   OUT_DIR: "out"
@@ -61,6 +60,7 @@ jobs:
           key: moto-source-${{ steps.moto-pin.outputs.hash }}
 
       - name: "🔧 Fix source warnings"
+        if: inputs.ksu_type != 'none'
         run: bash scripts/fix-source-warnings.sh "${{ env.KERNEL_SRC }}"
 
       - name: "⚡ Configure ccache"
@@ -92,6 +92,7 @@ jobs:
         run: bash scripts/setup-toolchain.sh
 
       - name: "🩹 Apply patches"
+        if: inputs.ksu_type != 'none'
         env:
           SOURCE_TYPE: ${{ inputs.source_type }}
           KSU_TYPE:    ${{ inputs.ksu_type }}
@@ -122,7 +123,7 @@ jobs:
           work_dir:   ${{ env.WORK_DIR }}
 
       - name: "🐳 Droidspaces"
-        if: inputs.with_droidspaces == 'true'
+        if: inputs.ksu_type != 'none'
         working-directory: ${{ env.KERNEL_SRC }}
         run: |
           bash ${{ github.workspace }}/scripts/droidspaces.sh \
