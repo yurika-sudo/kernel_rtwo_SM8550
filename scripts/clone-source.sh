@@ -30,6 +30,22 @@ case "$SOURCE_TYPE" in
         sleep 30
       done
     fi
+    
+    echo "[Moto] Cloning Devicetrees..."
+    for attempt in 1 2 3; do
+      git clone --recursive --branch "$MOTO_BRANCH" "$MOTO_DT_REPO" "$KERNEL_SRC/devicetrees" --depth=1 && break
+      echo "⚠️ Devicetrees attempt $attempt failed, retrying in 30s..."
+      rm -rf "$KERNEL_SRC/devicetrees"
+      sleep 30
+    done
+    
+    echo "[Moto] Cloning Modules..."
+    for attempt in 1 2 3; do
+      git clone --recursive --branch "$MOTO_BRANCH" "$MOTO_MOD_REPO" "$KERNEL_SRC/modules" --depth=1 && break
+      echo "⚠️ Modules attempt $attempt failed, retrying in 30s..."
+      rm -rf "$KERNEL_SRC/devicetrees"
+      sleep 30
+    done
     ;;
 
   *)
