@@ -39,6 +39,7 @@ cd "$KERNEL_SRC"
   apply_patch "$BASE/mem_opt_prefetch.patch"                 "mem_opt_prefetch"
   apply_patch "$BASE/optimized_mem_operations.patch"         "optimized_mem_operations"
   apply_patch "$BASE/unicode_bypass_fix_6.1-.patch"          "unicode_bypass_fix_6.1-"
+  apply_patch "$BASE/use_unlikely_wrap_cpufreq.patch"        "use_unlikely_wrap_cpufreq.patch"
 
 # Local common patches
 PATCHES_DIR="$WORK_DIR/patches"
