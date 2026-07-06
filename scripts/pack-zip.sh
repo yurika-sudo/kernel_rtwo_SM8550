@@ -48,6 +48,12 @@ AK3_SCRIPT="${WORK_DIR}/scripts/anykernel.sh"
 
 cp "$IMAGE" "ak3_tmp/Image"
 
+DTB_DIR="${WORK_DIR}/out/dist/dtbs"
+if [ -d "$DTB_DIR" ] && [ -n "$(ls -A "$DTB_DIR" 2>/dev/null)" ]; then
+  mkdir -p ak3_tmp/dtbs
+  cp "$DTB_DIR"/* ak3_tmp/dtbs/
+fi
+
 cd ak3_tmp
 zip -r9 "../${ZIP_NAME}" * -x .git/*
 cd ..
