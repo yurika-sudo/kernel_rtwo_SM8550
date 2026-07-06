@@ -125,23 +125,6 @@ else
   exit 1
 fi
 
-# dtb/dtbo — vendor dts is cloned into arch/arm64/boot/dts/vendor by
-# clone-source.sh; skip gracefully if it's missing.
-if [ -f "arch/arm64/boot/dts/vendor/Makefile" ]; then
-  echo "[${SOURCE_TYPE^^}] Building dtbs..."
-  if make "${MAKE_FLAGS[@]}" dtbs 2>&1 | tee -a "$LOG"; then
-    mkdir -p "${OUT_DIR}/dist/dtbs"
-    find "${OUT_DIR}/dist/arch/arm64/boot/dts/vendor" \
-      \( -name '*rtwo*.dtb' -o -name '*rtwo*.dtbo' \) -exec cp {} "${OUT_DIR}/dist/dtbs/" \;
-    echo "[${SOURCE_TYPE^^}] $(ls "${OUT_DIR}/dist/dtbs" 2>/dev/null | wc -l) dtb/dtbo file(s) copied"
-  else
-    echo "[WARN] ${SOURCE_TYPE^^} dtbs build failed — continuing without dtb output"
-    tail -50 "$LOG"
-  fi
-else
-  echo "[${SOURCE_TYPE^^}] No vendor devicetree source found, skipping dtbs"
-fi
-
 DURATION=$(( $(date +%s) - START ))
 echo "✅ Build done in $((DURATION/60))m $((DURATION%60))s"
 echo "duration=$DURATION" >> "${GITHUB_OUTPUT:-/dev/null}"
