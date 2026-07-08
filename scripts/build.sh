@@ -102,7 +102,7 @@ if $_FRAG_MERGED; then
     --set-str ZRAM_DEF_COMP "lz4"
     echo "[MOTO] Re-enforcing TCP_CONG=westwood after fragment merge"
     ./scripts/config --file "${OUT_DIR}/dist/.config" \
-    -d TCP_CONG_BBR \
+    -e TCP_CONG_BBR \
     -e TCP_CONG_WESTWOOD \
     --set-str DEFAULT_TCP_CONG "westwood" \
     -d DEFAULT_BBR \
